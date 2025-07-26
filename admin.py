@@ -48,9 +48,10 @@ def edit_user(user_id):
         phone = request.form['phone']
         school = request.form['school']
         user_class = request.form['class']
+        middle_name = request.form['middle_name']
         cursor.execute('''
-            UPDATE users SET first_name=?, last_name=?, phone=?, school=?, class=? WHERE id=?
-        ''', (first_name, last_name, phone, school, user_class, user_id))
+            UPDATE users SET first_name=?, last_name=?, middle_name=?, phone=?, school=?, class=? WHERE id=?
+        ''', (first_name, last_name, middle_name, phone, school, user_class, user_id))
         conn.commit()
         conn.close()
         return redirect(url_for('admin_index'))

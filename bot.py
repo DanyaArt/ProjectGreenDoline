@@ -265,12 +265,12 @@ def process_password2(message, last_name, first_name, middle_name, phone, school
             print(f"DEBUG: Регистрация пользователя - телефон: {phone}, password_hash: {password_hash}")
             print(f"DEBUG: Данные для вставки: user_id={message.from_user.id}, first_name={first_name}, last_name={last_name}, middle_name={middle_name}, phone={phone}, school={school}, class={class_num}")
             
-            cursor.execute(
-                "INSERT INTO users (user_id, first_name, last_name, middle_name, phone, school, class, register_date, password_hash) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)",
-                (message.from_user.id, first_name, last_name, middle_name, phone, school, class_num, password_hash)
-            )
-            conn.commit()
-            print('Пользователь успешно добавлен!')
+        cursor.execute(
+            "INSERT INTO users (user_id, first_name, last_name, middle_name, phone, school, class, register_date, password_hash) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)",
+            (message.from_user.id, first_name, last_name, middle_name, phone, school, class_num, password_hash)
+        )
+        conn.commit()
+        print('Пользователь успешно добавлен!')
             
             # Проверим, что пользователь действительно добавлен
             cursor.execute("SELECT * FROM users WHERE user_id=?", (message.from_user.id,))
@@ -280,8 +280,8 @@ def process_password2(message, last_name, first_name, middle_name, phone, school
             else:
                 print("ОШИБКА: пользователь не найден в БД после вставки!")
             
-            bot.send_message(message.chat.id, "✅ Регистрация завершена!", reply_markup=types.ReplyKeyboardRemove())
-            show_menu(message)
+        bot.send_message(message.chat.id, "✅ Регистрация завершена!", reply_markup=types.ReplyKeyboardRemove())
+        show_menu(message)
     except Exception as e:
         import traceback
         print('Ошибка при регистрации:', traceback.format_exc())
