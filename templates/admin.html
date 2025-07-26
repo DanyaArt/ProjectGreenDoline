@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель | Тест Климова</title>
+    <style>
+        :root {
+  --primary-blue: #2c5f9e;
+  --secondary-blue: #4a89dc;
+  --light-blue: #e6f0fa;
+  --primary-green: #3a9e4d;
+  --secondary-green: #5cb85c;
+  --light-green: #e8f5e9;
+  --white: #ffffff;
+  --light-gray: #f5f5f5;
+  --dark-gray: #333333;
+  --gradient: linear-gradient(135deg, #00c6a7 0%, #1e4d92 100%);
+  --gradient-hover: linear-gradient(135deg, #00d8b4 0%, #2a5cb0 100%);
+  --button-radius: 8px;
+  --button-shadow: 0 3px 10px rgba(0, 198, 167, 0.18);
+  --button-shadow-hover: 0 5px 15px rgba(0, 198, 167, 0.28);
+}
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', Arial, sans-serif;
+}
+body {
+  background-color: var(--light-gray);
+  color: var(--dark-gray);
+  line-height: 1.6;
+}
+.page-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+header {
+  background-color: var(--white);
+  box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+  padding: 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-green);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+.logo:before {
+  content: "";
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  background-image: url('https://habrastorage.org/getpro/moikrug/uploads/company/100/009/433/5/logo/big_c0b79d5b390f382ecedbc62f524e352c.jpeg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-right: 10px;
+}
+.nav-buttons {
+  display: flex;
+  gap: 15px;
+  margin-left: auto;
+}
+.nav-btn {
+  background: linear-gradient(270deg, #00c6a7, #1e4d92, #00c6a7);
+  background-size: 400% 400%;
+  background-position: 0% 50%;
+  animation: gradient-move 6s ease infinite;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(.4,0,.2,1);
+  text-decoration: none;
+  box-shadow: var(--button-shadow);
+  white-space: nowrap;
+  gap: 8px;
+  min-width: 160px;
+  min-height: 44px;
+}
+.nav-btn:hover {
+  animation-duration: 2.2s;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: var(--button-shadow-hover);
+  color: var(--white);
+  opacity: 0.97;
+}
+.nav-btn:active {
+  transform: scale(0.98);
+  opacity: 0.92;
+}
+.nav-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.content-wrap {
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  padding: 30px;
+  margin-bottom: 40px;
+}
+.admin-stats {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+.stat-card {
+  background: var(--light-blue);
+  border-radius: 8px;
+  padding: 18px 28px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  min-width: 180px;
+  text-align: center;
+}
+.stat-label {
+  color: var(--primary-blue);
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+.stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--primary-green);
+}
+.message-form {
+  margin-bottom: 30px;
+}
+.message-form h2 {
+  color: var(--primary-blue);
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #b2dfdb;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  resize: vertical;
+  min-height: 100px;
+  font-size: 16px;
+}
+.btn {
+  background: var(--gradient);
+  color: var(--white);
+  border: none;
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(.4,0,.2,1);
+  text-decoration: none;
+  box-shadow: var(--button-shadow);
+  white-space: nowrap;
+  gap: 8px;
+  min-width: 120px;
+  min-height: 44px;
+}
+.btn:hover {
+  background: var(--gradient-hover);
+  box-shadow: var(--button-shadow-hover);
+  color: var(--white);
+  opacity: 0.97;
+}
+.btn:active {
+  opacity: 0.92;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 25px;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  overflow: hidden;
+}
+th, td {
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid #e0f2f1;
+  font-size: 15px;
+}
+th {
+  background-color: var(--light-blue);
+  color: var(--primary-blue);
+  font-weight: bold;
+}
+tr:hover {
+  background-color: #f5fbfb;
+}
+.timestamp {
+  color: #616161;
+  font-size: 14px;
+  text-align: right;
+  margin-top: 10px;
+}
+@media (max-width: 900px) {
+  .admin-stats { flex-direction: column; gap: 12px; }
+  .content-wrap { padding: 18px; }
+  th, td { padding: 10px 8px; }
+}
+    </style>
+</head>
+<body>
+<header>
+  <div class="header-container page-wrap">
+    <a href="/" class="logo">АПХ «Зеленая Долина»</a>
+    <div class="nav-buttons">
+      <a href="/" class="nav-btn">На сайт</a>
+      <a href="{{ url_for('admin_logout') }}" class="nav-btn" style="background:#f44336;">Выйти</a>
+    </div>
+  </div>
+</header>
+<div class="page-wrap">
+  <div class="content-wrap">
+    <div class="admin-stats">
+      <div class="stat-card">
+        <div class="stat-label">Всего пользователей:</div>
+        <div class="stat-value">{{ total_users }}</div>
+      </div>
+    </div>
+    <div class="message-form">
+      <h2>Рассылка сообщений</h2>
+      <form action="{{ url_for('send_message') }}" method="post">
+        <textarea name="message" placeholder="Введите сообщение для рассылки всем пользователям..."></textarea>
+        <button type="submit" class="btn">Отправить всем</button>
+      </form>
+    </div>
+    <h2 style="color:var(--primary-blue);margin-bottom:18px;">Список пользователей</h2>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ФИО</th>
+            <th>Телефон</th>
+            <th>Школа</th>
+            <th>Класс</th>
+            <th>Дата регистрации</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user['id'] }}</td>
+            <td>{{ user['full_name'] }}</td>
+            <td>{{ user['phone'] }}</td>
+            <td>{{ user['school'] }}</td>
+            <td>{{ user['class'] }}</td>
+            <td class="local-time">{{ user['register_date'] }}</td>
+            <td>
+              {% if user['tg'] %}
+                <div>
+                  <a href="https://t.me/{{ user['tg'] }}" target="_blank">@{{ user['tg'] }}</a>
+                  {% if not user['user_id'] %}
+                    <div style="color:#f44336;font-size:12px;">Нет Telegram ID — пользователь должен написать боту /start</div>
+                  {% endif %}
+                </div>
+              {% endif %}
+              <form action="{{ url_for('delete_user', user_id=user['id']) }}" method="post" style="display: inline;">
+                <button type="submit" class="btn" style="background:#f44336;">Удалить</button>
+              </form>
+              <a href="{{ url_for('edit_user', user_id=user['id']) }}" class="btn" style="margin-left: 5px;">Редактировать</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+// Конвертируем время сервера в локальное время пользователя
+  document.querySelectorAll('.local-time').forEach(el => {
+      const serverTime = el.textContent;
+      if (serverTime) {
+          const localTime = new Date(serverTime + 'Z').toLocaleString();
+          el.textContent = localTime;
+      }
+  });
+</script>
+</body>
+</html>

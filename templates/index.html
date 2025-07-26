@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Климова - Профориентация школьников</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* Статичный зелено-сине-белый фон */
+            background: #f5fffa; /* Бело-зеленый */
+            background: linear-gradient(145deg, 
+                #f5fffa 0%,       /* Бело-зеленый */
+                #e0f7fa 30%,     /* Светло-голубой */
+                #b2ebf2 70%,     /* Голубой */
+                #80deea 100%);   /* Ярко-голубой */
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 150, 136, 0.2);
+            margin: 20px;
+            border: 1px solid rgba(178, 235, 242, 0.5);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            color: #17a242;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .logo p {
+            color: #17a242;
+            font-size: 16px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            background-color: #e0f7fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: #17a242;
+        }
+        
+        .tab.active {
+            background-color: #17a242;
+            color: white;
+        }
+        
+        .tab:first-child {
+            border-right: 1px solid #b2dfdb;
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #17a242;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #424242;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #b2dfdb;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: #f5fbfb;
+        }
+        
+        input.error {
+            border-color: #f44336;
+        }
+        
+        input:focus {
+            border-color: #17a242;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 137, 123, 0.2);
+            background-color: white;
+        }
+        
+        .error-message {
+            color: #f44336;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .main-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #17a242;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .main-btn:hover {
+            background-color: #17a242;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 105, 92, 0.3);
+        }
+        
+        .main-btn:active {
+            transform: translateY(0);
+        }
+        
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .forgot-password a {
+            color: #17a242;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            color: #17a242;
+        }
+        
+        .divider::before, .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background-color: #e0f2f1;
+        }
+        
+        .divider::before {
+            left: 0;
+        }
+        
+        .divider::after {
+            right: 0;
+        }
+        
+        .gosuslugi-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #76c1ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(13, 107, 183, 0.3);
+            text-decoration: none;
+        }
+        
+        .gosuslugi-btn:hover {
+            background-color: #0a5496;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(13, 107, 183, 0.3);
+        }
+        
+        .gosuslugi-btn:active {
+            transform: translateY(0);
+        }
+        
+        .info-text {
+            text-align: center;
+            color: #616161;
+            font-size: 14px;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+        
+        /* Специальный стиль для ошибки несовпадения паролей */
+        .password-mismatch {
+            color: #f44336;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>Тест Климова</h1>
+            <p>Профориентация для школьников</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="openTab('login')">Вход</div>
+            <div class="tab" onclick="openTab('register')">Регистрация</div>
+        </div>
+        
+        <!-- Вкладка Вход -->
+        <div id="login" class="tab-content active">
+            <h2>Вход в аккаунт</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="login-email">Телефон</label>
+                    <input type="text" id="login-email" placeholder="Введите ваш номер телефона">
+                    <div class="error-message" id="login-email-error">Это поле обязательно для заполнения</div>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Пароль</label>
+                    <input type="password" id="login-password" placeholder="Введите ваш пароль">
+                    <div class="error-message" id="login-password-error">Это поле обязательно для заполнения</div>
+                </div>
+                <div class="error-message" id="login-error-message" style="display:none;"></div>
+                
+                <button class="main-btn" type="submit">Войти</button>
+                <div class="forgot-password">
+                    <a href="#">Забыли пароль?</a>
+                </div>
+            </form>
+            
+            <div class="divider">или</div>
+            <button id="tgLoginBtn" class="gosuslugi-btn" style="background-color: #0088cc;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="white" style="margin-right: 10px;">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.03-.1.05-.2-.05-.3-.1-.1-.25-.05-.36-.03-.15.05-2.57 1.66-7.27 4.88-.7.48-1.34.72-1.92.7-.63-.02-1.84-.36-2.74-.73-1.1-.45-1.98-.7-1.9-1.47.03-.3.45-.6 1.23-.86z"/>
+    </svg>
+    Войти через Telegram
+</button>
+<script>
+            document.getElementById('tgLoginBtn').addEventListener('click', function() {
+    window.open('https://t.me/YourTestKlimovaBot', '_blank');
+            });
+</script>
+            <div class="info-text">
+                Тест Климова поможет определить ваши профессиональные склонности
+            </div>
+        </div>
+        
+        <!-- Вкладка Регистрация -->
+        <div id="register" class="tab-content">
+            <h2>Создать аккаунт</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="register-name">ФИО</label>
+                    <input type="text" id="register-name" placeholder="Введите ваше полное имя">
+                    <div class="error-message" id="register-name-error">Это поле обязательно для заполнения</div>
+                </div>
+                <div class="form-group">
+                    <label for="register-phone">Телефон</label>
+                    <input type="text" id="register-phone" placeholder="Введите ваш номер телефона">
+                    <div class="error-message" id="register-phone-error">Это поле обязательно для заполнения</div>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Пароль</label>
+                    <input type="password" id="register-password" placeholder="Придумайте пароль">
+                    <div class="error-message" id="register-password-error">Это поле обязательно для заполнения</div>
+                    <div class="password-mismatch" id="password-mismatch-error1">Пароли не совпадают</div>
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm">Подтверждение пароля</label>
+                    <input type="password" id="register-confirm" placeholder="Повторите пароль">
+                    <div class="error-message" id="register-confirm-error">Это поле обязательно для заполнения</div>
+                    <div class="password-mismatch" id="password-mismatch-error2">Пароли не совпадают</div>
+                </div>
+                <div class="form-group">
+                    <label for="register-school">Школа</label>
+                    <input type="text" id="register-school" placeholder="Введите номер вашей школы">
+                    <div class="error-message" id="register-school-error">Это поле обязательно для заполнения</div>
+                </div>
+                <div class="form-group">
+                    <label for="register-class">Класс</label>
+                    <input type="text" id="register-class" placeholder="Введите ваш класс">
+                    <div class="error-message" id="register-class-error">Это поле обязательно для заполнения</div>
+                </div>
+                <div class="form-group">
+                    <label for="register-tg">Telegram (юзернейм)</label>
+                    <input type="text" id="register-tg" placeholder="@username (необязательно)">
+                    <div class="error-message" id="register-tg-error" style="display:none;"></div>
+                </div>
+                <button class="main-btn" type="submit">Зарегистрироваться</button>
+            </form>
+            
+            <div class="divider">или</div>
+            <button id="tgRegisterBtn" class="gosuslugi-btn" style="background-color: #0088cc;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="white" style="margin-right: 10px;">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.03-.1.05-.2-.05-.3-.1-.1-.25-.05-.36-.03-.15.05-2.57 1.66-7.27 4.88-.7.48-1.34.72-1.92.7-.63-.02-1.84-.36-2.74-.73-1.1-.45-1.98-.7-1.9-1.47.03-.3.45-.6 1.23-.86z"/>
+    </svg>
+                Зарегистрироваться через Telegram
+</button>
+            <script>
+            document.getElementById('tgRegisterBtn').addEventListener('click', function() {
+                window.open('https://t.me/YourTestKlimovaBot', '_blank');
+            });
+            </script>
+            <div class="info-text">
+                Пройдя регистрацию, вы сможете приступить к профориентационному тесту и узнать, какая профессия Вам подходит
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function openTab(tabName) {
+            // Скрыть все вкладки
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            // Убрать активный класс у всех кнопок
+            const tabs = document.getElementsByClassName('tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            // Показать выбранную вкладку и сделать кнопку активной
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Валидация формы входа
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let isValid = true;
+            const phone = document.getElementById('login-email');
+            const password = document.getElementById('login-password');
+            const errorMessage = document.getElementById('login-error-message');
+            errorMessage.style.display = 'none';
+            errorMessage.textContent = '';
+            if (!phone.value.trim()) {
+                phone.classList.add('error');
+                document.getElementById('login-email-error').style.display = 'block';
+                isValid = false;
+            } else {
+                phone.classList.remove('error');
+                document.getElementById('login-email-error').style.display = 'none';
+            }
+            if (!password.value.trim()) {
+                password.classList.add('error');
+                document.getElementById('login-password-error').style.display = 'block';
+                isValid = false;
+            } else {
+                password.classList.remove('error');
+                document.getElementById('login-password-error').style.display = 'none';
+            }
+            if (isValid) {
+                fetch('/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({phone: phone.value.trim(), password: password.value})
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        } else {
+                            window.location.href = 'test.html';
+                        }
+                    } else {
+                        errorMessage.textContent = data.error || 'Ошибка входа';
+                        errorMessage.style.display = 'block';
+                    }
+                })
+                .catch(() => {
+                    errorMessage.textContent = 'Ошибка соединения с сервером';
+                    errorMessage.style.display = 'block';
+                });
+            }
+        });
+
+        // Валидация формы регистрации
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let isValid = true;
+
+            // Проверка ФИО
+            const name = document.getElementById('register-name');
+            const nameError = document.getElementById('register-name-error');
+            if (!name.value.trim()) {
+                name.classList.add('error');
+                nameError.style.display = 'block';
+                isValid = false;
+            } else {
+                name.classList.remove('error');
+                nameError.style.display = 'none';
+            }
+
+            // Проверка телефона
+            const phone = document.getElementById('register-phone');
+            const phoneError = document.getElementById('register-phone-error');
+            if (!phone.value.trim()) {
+                phone.classList.add('error');
+                phoneError.style.display = 'block';
+                isValid = false;
+            } else {
+                phone.classList.remove('error');
+                phoneError.style.display = 'none';
+            }
+
+            // Проверка пароля
+            const password = document.getElementById('register-password');
+            const passwordError = document.getElementById('register-password-error');
+            if (!password.value.trim()) {
+                password.classList.add('error');
+                passwordError.style.display = 'block';
+                isValid = false;
+            } else {
+                password.classList.remove('error');
+                passwordError.style.display = 'none';
+            }
+
+            // Проверка подтверждения пароля
+            const confirm = document.getElementById('register-confirm');
+            const confirmError = document.getElementById('register-confirm-error');
+            const mismatchError1 = document.getElementById('password-mismatch-error1');
+            const mismatchError2 = document.getElementById('password-mismatch-error2');
+            
+            if (!confirm.value.trim()) {
+                confirm.classList.add('error');
+                confirmError.style.display = 'block';
+                mismatchError1.style.display = 'none';
+                mismatchError2.style.display = 'none';
+                isValid = false;
+            } else {
+                confirmError.style.display = 'none';
+                
+                // Проверка совпадения паролей
+                if (password.value !== confirm.value) {
+                    password.classList.add('error');
+                    confirm.classList.add('error');
+                    mismatchError1.style.display = 'block';
+                    mismatchError2.style.display = 'block';
+                    isValid = false;
+                } else {
+                    password.classList.remove('error');
+                    confirm.classList.remove('error');
+                    mismatchError1.style.display = 'none';
+                    mismatchError2.style.display = 'none';
+                }
+            }
+
+            // Проверка школы
+            const school = document.getElementById('register-school');
+            const schoolError = document.getElementById('register-school-error');
+            if (!school.value.trim()) { // Changed to .value.trim()
+                school.classList.add('error');
+                schoolError.style.display = 'block';
+                isValid = false;
+            } else {
+                school.classList.remove('error');
+                schoolError.style.display = 'none';
+            }
+
+            // Проверка класса
+            const classField = document.getElementById('register-class');
+            const classError = document.getElementById('register-class-error');
+            if (!classField.value.trim()) {
+                classField.classList.add('error');
+                classError.style.display = 'block';
+                isValid = false;
+            } else {
+                classField.classList.remove('error');
+                classError.style.display = 'none';
+            }
+
+            if (isValid) {
+                const name = document.getElementById('register-name').value.trim();
+                const phone = document.getElementById('register-phone').value.trim();
+                const password = document.getElementById('register-password').value;
+                const user_class = document.getElementById('register-class').value.trim();
+                const school = document.getElementById('register-school').value.trim(); // Changed to .value.trim()
+                const tg = document.getElementById('register-tg').value.trim();
+                const successMsg = document.querySelector('.success-message');
+                if (successMsg) successMsg.remove();
+                const errorMsg = document.querySelector('.register-error-message');
+                if (errorMsg) errorMsg.remove();
+                fetch('/register', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name, phone, password, user_class, school, tg})
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const msg = document.createElement('div');
+                        msg.className = 'success-message';
+                        msg.style.color = '#17a242';
+                        msg.style.marginBottom = '15px';
+                        msg.textContent = 'Регистрация успешна! Теперь войдите в систему.';
+                        document.getElementById('registerForm').prepend(msg);
+                        document.getElementById('registerForm').reset();
+                    } else {
+                        const msg = document.createElement('div');
+                        msg.className = 'register-error-message';
+                        msg.style.color = '#f44336';
+                        msg.style.marginBottom = '15px';
+                        msg.textContent = data.error || 'Ошибка регистрации';
+                        document.getElementById('registerForm').prepend(msg);
+                    }
+                })
+                .catch(() => {
+                    const msg = document.createElement('div');
+                    msg.className = 'register-error-message';
+                    msg.style.color = '#f44336';
+                    msg.style.marginBottom = '15px';
+                    msg.textContent = 'Ошибка соединения с сервером';
+                    document.getElementById('registerForm').prepend(msg);
+                });
+            }
+            
+        });
+
+        // Сброс ошибок при вводе
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                const errorId = this.id + '-error';
+                const errorElement = document.getElementById(errorId);
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+                
+                // Сброс ошибки несовпадения паролей при изменении любого из полей пароля
+                if (this.id === 'register-password' || this.id === 'register-confirm') {
+                    const mismatchError1 = document.getElementById('password-mismatch-error1');
+                    const mismatchError2 = document.getElementById('password-mismatch-error2');
+                    mismatchError1.style.display = 'none';
+                    mismatchError2.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

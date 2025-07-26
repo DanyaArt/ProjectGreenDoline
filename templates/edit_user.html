@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать пользователя</title>
+    <style>
+        body {
+            background: #f5fffa;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+        }
+        .edit-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            padding: 30px 35px;
+        }
+        h2 {
+            color: #17a242;
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 7px;
+            color: #0D6BB7;
+        }
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 18px;
+            border: 1px solid #b2dfdb;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #17a242;
+            color: #fff;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background: #148f3a;
+        }
+        .btn-back {
+            background: #0D6BB7;
+        }
+        .btn-back:hover {
+            background: #095a97;
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-container">
+        <h2>Редактировать пользователя</h2>
+        {% if error %}
+            <div style="color: red; margin-bottom: 15px;">{{ error }}</div>
+        {% endif %}
+        <form method="post" style="margin-bottom: 30px;">
+            <label for="last_name">Фамилия:</label>
+            <input type="text" id="last_name" name="last_name" value="{{ user['last_name'] }}" required>
+
+            <label for="first_name">Имя:</label>
+            <input type="text" id="first_name" name="first_name" value="{{ user['first_name'] }}" required>
+
+            <label for="middle_name">Отчество:</label>
+            <input type="text" id="middle_name" name="middle_name" value="{{ user['middle_name'] }}">
+
+            <label for="phone">Телефон:</label>
+            <input type="tel" id="phone" name="phone" value="{{ user['phone'] }}">
+
+            <div style="display: flex; gap: 15px;">
+                <div style="flex:1;">
+                    <label for="school">Школа:</label>
+                    <input type="text" id="school" name="school" value="{{ user['school'] }}">
+                </div>
+                <div style="flex:1;">
+                    <label for="class">Класс:</label>
+                    <input type="text" id="class" name="class" value="{{ user['class'] }}">
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Сохранить</button>
+            <a href="{{ url_for('admin_index') }}" class="btn btn-back">Назад</a>
+        </form>
+
+        <div style="margin-bottom:18px;font-size:16px;color:#0D6BB7;"><b>Количество попыток прохождения теста:</b> {{ test_attempts }}</div>
+        <button id="btnExportExcel" class="btn" style="background:#0D6BB7;margin-bottom:18px;">Скачать Excel (все попытки)</button>
+        <div style="border-top:1px solid #e0e0e0; margin:30px 0 20px 0;"></div>
+        <h3 style="color:#0D6BB7; margin-bottom:10px;">История прохождения теста</h3>
+        {% if test_history and test_history|length > 0 %}
+            <div style="display:flex;flex-direction:column;gap:18px;">
+                {% for attempt in test_history %}
+                {% set total = (attempt[2]|int + attempt[3]|int + attempt[4]|int + attempt[5]|int + attempt[6]|int) %}
+                <div style="background:#f8f8f8;border-radius:8px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,0.04);position:relative;">
+                    <button class="btn btnExportSingleExcel" data-idx="{{ loop.index0 }}" style="position:absolute;top:12px;right:12px;padding:4px 10px;font-size:13px;background:#148f3a;">Скачать Excel</button>
+                    <div style="color:#888;font-size:13px;margin-bottom:6px;">{{ attempt[0] }}</div>
+                    <div style="font-size:15px;margin-bottom:8px;">
+                        <b>Идеальный тип:</b> <span style="color:#0D6BB7;">{{ attempt[1] }}</span>
+                    </div>
+                    <div style="font-size:14px;margin-bottom:8px;">
+                        <b>Проценты по типам:</b>
+                        <ul style="margin:6px 0 0 0;padding-left:18px;">
+                            <li>Человек-природа: <b>{{ (attempt[2]|int * 100 // total) if total else 0 }}%</b></li>
+                            <li>Человек-техника: <b>{{ (attempt[3]|int * 100 // total) if total else 0 }}%</b></li>
+                            <li>Человек-человек: <b>{{ (attempt[4]|int * 100 // total) if total else 0 }}%</b></li>
+                            <li>Человек-знаковая система: <b>{{ (attempt[5]|int * 100 // total) if total else 0 }}%</b></li>
+                            <li>Человек-художественный образ: <b>{{ (attempt[6]|int * 100 // total) if total else 0 }}%</b></li>
+                        </ul>
+                    </div>
+                    <div style="font-size:14px;">
+                        <b>Профессии:</b>
+                        {% set profs = profession_map.get(attempt[1], []) %}
+                        {% if profs %}
+                            <span style="color:#148f3a;">{{ profs|join(', ') }}</span>
+                        {% else %}
+                            <span style="color:#aaa;">Нет данных</span>
+                        {% endif %}
+                    </div>
+                    <div style='margin:18px auto 0 auto; text-align:center;'>
+                        <canvas id="chart_attempt_{{ loop.index0 }}" width="480" height="200" style="display:inline-block;"></canvas>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="color:#aaa;">Нет попыток прохождения теста</div>
+        {% endif %}
+        <div style="border-top:1px solid #e0e0e0; margin:30px 0 20px 0;"></div>
+
+        <div style="border-top:1px solid #e0e0e0; margin:30px 0 20px 0;"></div>
+        <h3 style="color:#0D6BB7; margin-bottom:10px;">Чат с пользователем</h3>
+        <div id="chat-box" style="max-height:320px;overflow-y:auto;background:#f8f8f8;border-radius:8px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,0.03);margin-bottom:10px;display:flex;flex-direction:column;">
+            {% if messages and messages|length > 0 %}
+                {% for msg in messages|reverse %}
+                    {% if msg[0]=='admin' %}
+                        <div style="margin-bottom:10px;display:flex;justify-content:flex-end;">
+                            <div style="max-width:70%;background:#d1f5e0;padding:10px 14px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+                                <div style="font-size:13px;color:#888;text-align:right;">{{ msg[2] }}</div>
+                                <div style="font-size:15px;white-space:pre-line;color:#222;">{{ msg[1] }}</div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div style="margin-bottom:10px;display:flex;justify-content:flex-start;">
+                            <div style="max-width:70%;background:#e3e8f0;padding:10px 14px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+                                <div style="font-size:13px;color:#888;text-align:right;">{{ msg[2] }}</div>
+                                <div style="font-size:15px;white-space:pre-line;color:#222;">{{ msg[1] }}</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div style="color:#aaa;text-align:center;">Нет сообщений</div>
+            {% endif %}
+        </div>
+        <form method="post" action="{{ url_for('send_personal_message', user_id=user['id']) }}" style="display:flex;gap:10px;align-items:flex-end;">
+            <textarea name="personal_message" rows="2" style="flex:1;padding:10px;border-radius:8px;border:1px solid #b2dfdb;resize:vertical;" placeholder="Введите сообщение..."></textarea>
+            <button type="submit" class="btn" style="background:#0D6BB7;min-width:120px;">Отправить</button>
+        </form>
+        <script>
+        // Автопрокрутка вниз
+        var chatBox = document.getElementById('chat-box');
+        if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+        </script>
+    </div>
+</body>
+</html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.getElementById('btnExportExcel').addEventListener('click', function() {
+    const rows = [
+        ["Дата", "Идеальный тип", "Человек-природа (%)", "Человек-техника (%)", "Человек-человек (%)", "Человек-знаковая система (%)", "Человек-художественный образ (%)", "Рекомендуемые профессии"]
+    ];
+    {% for attempt in test_history %}
+        {% set total = (attempt[2]|int + attempt[3]|int + attempt[4]|int + attempt[5]|int + attempt[6]|int) %}
+        rows.push([
+            "{{ attempt[0] }}",
+            "{{ attempt[1] }}",
+            "{{ (attempt[2]|int * 100 // total) if total else 0 }}%",
+            "{{ (attempt[3]|int * 100 // total) if total else 0 }}%",
+            "{{ (attempt[4]|int * 100 // total) if total else 0 }}%",
+            "{{ (attempt[5]|int * 100 // total) if total else 0 }}%",
+            "{{ (attempt[6]|int * 100 // total) if total else 0 }}%",
+            "{{ profession_map.get(attempt[1], [])|join(', ') }}"
+        ]);
+    {% endfor %}
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [
+        {wch:18}, {wch:22}, {wch:20}, {wch:22}, {wch:22}, {wch:28}, {wch:32}, {wch:90}
+    ];
+    for (let r = 1; r < rows.length; r++) {
+        for (let c = 2; c <= 6; c++) {
+            const cell = XLSX.utils.encode_cell({c, r});
+            if (ws[cell]) ws[cell].s = { alignment: { horizontal: "center", vertical: "center" } };
+        }
+    }
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "История теста");
+    XLSX.writeFile(wb, "История_теста_пользователя.xlsx");
+});
+
+// Экспорт одной попытки
+const attempts = [
+    {% for attempt in test_history %}
+        {
+            date: "{{ attempt[0] }}",
+            dominant: "{{ attempt[1] }}",
+            scores: [{{ attempt[2]|int }}, {{ attempt[3]|int }}, {{ attempt[4]|int }}, {{ attempt[5]|int }}, {{ attempt[6]|int }}],
+            profs: "{{ profession_map.get(attempt[1], [])|join(', ') }}"
+        },
+    {% endfor %}
+];
+
+Array.from(document.getElementsByClassName('btnExportSingleExcel')).forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        const idx = parseInt(btn.getAttribute('data-idx'));
+        const att = attempts[idx];
+        const total = att.scores.reduce((a,b)=>a+b,0);
+        const perc = total ? att.scores.map(x=>Math.round(x*100/total)+"%") : ["0%","0%","0%","0%","0%"];
+        const rows = [
+            ["Дата", "Идеальный тип", "Человек-природа (%)", "Человек-техника (%)", "Человек-человек (%)", "Человек-знаковая система (%)", "Человек-художественный образ (%)", "Рекомендуемые профессии"],
+            [att.date, att.dominant, perc[0], perc[1], perc[2], perc[3], perc[4], att.profs]
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(rows);
+        ws['!cols'] = [
+            {wch:18}, {wch:22}, {wch:20}, {wch:22}, {wch:22}, {wch:28}, {wch:32}, {wch:90}
+        ];
+        for (let r = 1; r < rows.length; r++) {
+            for (let c = 2; c <= 6; c++) {
+                const cell = XLSX.utils.encode_cell({c, r});
+                if (ws[cell]) ws[cell].s = { alignment: { horizontal: "center", vertical: "center" } };
+            }
+        }
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Попытка теста");
+        XLSX.writeFile(wb, `Тест_пользователя_${att.date.replace(/[: ]/g,'_')}.xlsx`);
+    });
+});
+
+// Диаграммы для каждой попытки
+window.addEventListener('DOMContentLoaded', function() {
+    {% for attempt in test_history %}
+        {% set total = (attempt[2]|int + attempt[3]|int + attempt[4]|int + attempt[5]|int + attempt[6]|int) %}
+        var ctx{{ loop.index0 }} = document.getElementById('chart_attempt_{{ loop.index0 }}').getContext('2d');
+        new Chart(ctx{{ loop.index0 }}, {
+            type: 'bar',
+            data: {
+                labels: [
+                    'Человек-природа',
+                    'Человек-техника',
+                    'Человек-человек',
+                    'Человек-знаковая система',
+                    'Человек-художественный образ'
+                ],
+                datasets: [{
+                    label: 'Проценты',
+                    data: [
+                        {{ (attempt[2]|int * 100 // total) if total else 0 }},
+                        {{ (attempt[3]|int * 100 // total) if total else 0 }},
+                        {{ (attempt[4]|int * 100 // total) if total else 0 }},
+                        {{ (attempt[5]|int * 100 // total) if total else 0 }},
+                        {{ (attempt[6]|int * 100 // total) if total else 0 }}
+                    ],
+                    backgroundColor: [
+                        '#4caf50', '#2196f3', '#ff9800', '#9c27b0', '#f44336'
+                    ]
+                }]
+            },
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { callback: function(value) { return value + '%'; } }
+                    }
+                }
+            }
+        });
+    {% endfor %}
+});
+</script>

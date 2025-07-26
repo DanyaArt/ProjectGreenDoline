@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест на профориентацию от АПХ "Зеленая Долина"</title>
+<!-- Добавляем библиотеку SheetJS для работы с Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --primary-blue: #2c5f9e;
+  --secondary-blue: #4a89dc;
+  --light-blue: #e6f0fa;
+  --primary-green: #3a9e4d;
+  --secondary-green: #5cb85c;
+  --light-green: #e8f5e9;
+  --white: #ffffff;
+  --light-gray: #f5f5f5;
+  --dark-gray: #333333;
+  --gradient: linear-gradient(135deg, #00c6a7 0%, #1e4d92 100%);
+  --gradient-hover: linear-gradient(135deg, #00d8b4 0%, #2a5cb0 100%);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', Arial, sans-serif;
+}
+
+body {
+  background-color: var(--light-gray);
+  color: var(--dark-gray);
+  line-height: 1.6;
+}
+
+.page-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+header {
+  background-color: var(--white);
+  box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+  padding: 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-green);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.logo:before {
+  content: "";
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  background-image: url('https://habrastorage.org/getpro/moikrug/uploads/company/100/009/433/5/logo/big_c0b79d5b390f382ecedbc62f524e352c.jpeg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-right: 10px;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 15px;
+  margin-left: auto;
+}
+
+.nav-btn {
+  background: var(--gradient);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  box-shadow: 0 3px 10px rgba(0, 198, 167, 0.3);
+  white-space: nowrap;
+}
+
+.nav-btn:hover {
+  background: var(--gradient-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 198, 167, 0.4);
+}
+
+.top-block {
+  background: var(--gradient);
+  color: var(--white);
+  padding: 40px 0;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.test-title {
+  font-size: 32px;
+  margin-bottom: 15px;
+}
+
+.test-description {
+  font-size: 18px;
+  max-width: 800px;
+  margin: 0 auto 20px;
+}
+
+.content-wrap {
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  padding: 30px;
+  margin-bottom: 40px;
+}
+
+.question-header {
+  font-size: 24px;
+  color: var(--primary-blue);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.question-instruction {
+  font-size: 16px;
+  color: var(--dark-gray);
+  margin-bottom: 30px;
+  text-align: center;
+  font-style: italic;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .options-container {
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .nav-buttons {
+    gap: 20px;
+  }
+  
+  .nav-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+}
+
+.option-card {
+  background-color: var(--light-blue);
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  flex: 1;
+  max-width: 400px;
+  border: 2px solid transparent;
+}
+
+.option-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  border-color: var(--secondary-blue);
+}
+
+.option-card.selected {
+  background-color: var(--light-green);
+  border: 2px solid;
+  border-image: var(--gradient) 1;
+  border-radius: 8px;
+  position: relative;
+}
+
+.option-card.selected .option-image {
+  border-radius: 5px;
+}
+
+.option-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.option-text {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  color: var(--primary-blue);
+  font-weight: bold;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.btn {
+  padding: 12px 25px;
+  border-radius: 5px;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-prev {
+  background-color: var(--light-gray);
+  color: var(--dark-gray);
+}
+
+.btn-prev:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-next {
+  background: var(--gradient);
+  color: var(--white);
+  box-shadow: 0 3px 10px rgba(0, 198, 167, 0.3);
+}
+
+.btn-next:hover {
+  background: var(--gradient-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 198, 167, 0.4);
+}
+
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.progress-container {
+  width: 100%;
+  background-color: var(--light-gray);
+  border-radius: 5px;
+  margin-bottom: 30px;
+}
+
+.progress-bar {
+  height: 10px;
+  background: var(--gradient);
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  text-align: right;
+  font-size: 14px;
+  color: var(--dark-gray);
+  margin-top: 5px;
+}
+
+footer {
+  background: var(--gradient);
+  color: var(--white);
+  padding: 30px 0;
+  text-align: center;
+}
+
+.footer-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.footer-logo {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.footer-info {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.social-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.social-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--white);
+  transition: all 0.3s ease;
+}
+
+.social-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.social-button img {
+  width: 24px;
+  height: 24px;
+}
+
+.result-container {
+  display: none;
+  padding: 30px;
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom: 40px;
+}
+
+.result-title {
+  font-size: 28px;
+  color: var(--primary-green);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.result-description {
+  font-size: 16px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.scales-container {
+  margin: 30px 0;
+}
+
+.scale-item {
+  margin-bottom: 20px;
+}
+
+.scale-name {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.scale-name span:first-child {
+  color: var(--primary-blue);
+}
+
+.scale-bar-container {
+  width: 100%;
+  height: 20px;
+  background-color: var(--light-gray);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.scale-bar {
+  height: 100%;
+  background: var(--gradient);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+.scale-item.dominant .scale-bar {
+  background: var(--primary-green);
+  box-shadow: 0 0 10px rgba(58, 158, 77, 0.5);
+}
+
+.dominant-scale {
+  background-color: var(--light-green);
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-green);
+  margin-top: 30px;
+}
+
+.dominant-scale-title {
+  color: var(--primary-green);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.dominant-scale-description {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.recommended-professions {
+  margin-top: 40px;
+}
+
+.recommended-professions-title {
+  font-size: 22px;
+  color: var(--primary-blue);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.profession-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profession-item {
+  background-color: var(--light-gray);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.profession-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary-blue);
+}
+
+.profession-buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.vacancy-btn {
+  padding: 10px 16px;
+  border-radius: 5px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.vacancy-btn.hh {
+  background-color: #FF3366;
+  color: white;
+}
+
+.vacancy-btn.avito {
+  background-color: #68BC5F;
+  color: white;
+}
+
+.vacancy-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.vacancy-btn img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+@media (max-width: 767px) {
+  header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px 0;
+  }
+  
+  .header-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .logo {
+    font-size: 18px;
+    white-space: nowrap;
+    margin-bottom: 10px;
+    text-align: center;
+    width: auto;
+    padding: 0 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .logo:before {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    margin-right: 8px;
+    margin-left: 0;
+  }
+  
+  .nav-buttons {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    margin-left: 0;
+    gap: 10px;
+  }
+  
+  .nav-btn {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+     cursor: pointer; 
+  }
+  
+  .test-title {
+    font-size: 24px;
+  }
+  
+  .test-description {
+    font-size: 16px;
+  }
+  
+  .question-header {
+    font-size: 20px;
+  }
+  
+  .content-wrap {
+    padding: 20px;
+  }
+  
+  .option-card {
+    padding: 15px;
+  }
+  
+  .scale-name {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .social-buttons {
+    gap: 15px;
+  }
+  
+  .profession-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .vacancy-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.result-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.result-btn {
+  padding: 12px 25px;
+  border-radius: 5px;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.result-btn.profile {
+  background-color: var(--primary-blue);
+  color: white;
+}
+
+.result-btn.restart {
+  background-color: var(--primary-green);
+  color: white;
+}
+
+.result-btn.download {
+  background-color: var(--primary-blue);
+  color: white;
+}
+
+.result-btn.download-all {
+  background-color: var(--primary-green);
+  color: white;
+}
+
+.result-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.profile-container {
+  display: none;
+  padding: 30px;
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom: 40px;
+}
+
+.profile-title {
+  font-size: 28px;
+  color: var(--primary-blue);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.test-history {
+  margin-top: 30px;
+}
+
+.test-history-item {
+  background-color: var(--light-gray);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.test-history-date {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: var(--primary-blue);
+}
+
+.test-history-time {
+  font-size: 14px;
+  color: var(--dark-gray);
+  margin-bottom: 10px;
+}
+
+.test-history-results {
+  margin-top: 10px;
+}
+
+.test-history-actions {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.test-history-download {
+  background-color: var(--primary-blue);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.test-history-download:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 767px) {
+  .result-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .result-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .test-history-actions {
+    position: static;
+    margin-top: 10px;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="page-wrap">
+    <div class="header-container">
+      <a href="#" class="logo" id="logoLink">Тест от АПХ «Зелёная Долина»</a>
+      <div class="nav-buttons">
+        <a href="https://zelenaya-dolina.com/about/" class="nav-btn" target="_blank">О нас</a>
+        <a href="https://zelenaya-dolina.com/contacts/" class="nav-btn" target="_blank">Контакты</a>
+        <a href="https://zelenaya-dolina.com/struktura-biznesa/" class="nav-btn" target="_blank">Направления</a>
+        <button class="nav-btn" id="btnNavProfile">Профиль</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="top-block">
+  <div class="page-wrap">
+    <h1 class="test-title">Определите свой профессиональный тип</h1>
+    <p class="test-description">Из 20 пар видов деятельности выберите наиболее предпочтительный для вас вариант, чтобы определить тип будущей профессии по методике Климова</p>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar" style="width: 5%;"></div>
+    <div class="progress-text" id="progressText">1/20</div>
+  </div>
+
+  <div class="content-wrap">
+    <h2 class="question-header">Вопрос <span id="currentQuestion">1</span> из 20</h2>
+    <p class="question-instruction">Предположим, что после соответствующего обучения Вы сможете выполнить любую работу. Но если бы Вам пришлось выбирать только из двух возможностей, что бы Вы предпочли?</p>
+    
+    <div class="options-container" id="optionsContainer">
+      <!-- Options will be inserted here by JavaScript -->
+    </div>
+    
+    <div class="navigation-buttons">
+      <button class="btn btn-prev" id="btnPrev" disabled>Назад</button>
+      <button class="btn btn-next" id="btnNext">Далее</button>
+    </div>
+  </div>
+
+  <div class="result-container" id="resultContainer">
+    <h2 class="result-title">Ваш результат</h2>
+    <div class="result-description" id="resultDescription"></div>
+    
+    <div class="scales-container" id="scalesContainer">
+      <!-- Scales will be inserted here by JavaScript -->
+    </div>
+    
+    <div class="dominant-scale" id="dominantScale">
+      <!-- Dominant scale description will be inserted here -->
+    </div>
+    
+    <div class="recommended-professions" id="recommendedProfessions">
+      <!-- Recommended professions will be inserted here -->
+    </div>
+    
+    <div class="result-buttons">
+      <button class="result-btn profile" id="btnProfile">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+          <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+        </svg>
+        Профиль
+      </button>
+      <button class="result-btn restart" id="btnRestart">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+          <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+        </svg>
+        Пройти тест заново
+      </button>
+      <button class="result-btn download" id="btnDownload">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+          <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+        </svg>
+        Сохранить в Excel
+      </button>
+    </div>
+  </div>
+
+  <div class="profile-container" id="profileContainer">
+    <h2 class="profile-title">История тестирований</h2>
+    <div class="test-history" id="testHistory">
+      <!-- Test history will be inserted here by JavaScript -->
+    </div>
+    <div class="result-buttons">
+      <button class="result-btn restart" id="btnBackToResults">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 0 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+        </svg>
+        Назад к результатам
+      </button>
+      <button class="result-btn download-all" id="btnDownloadAll">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+          <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+        </svg>
+        Сохранить все результаты
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-content">
+    <div class="footer-logo">АПХ «Зеленая Долина»</div>
+    <div class="footer-info">© 2025 Все права защищены</div>
+    <div class="social-buttons">
+      <a href="https://vk.com/zelenaya.dolina31" class="social-button" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/VK.com-logo.svg" alt="ВКонтакте">
+      </a>
+      <a href="https://t.me/zelenaya_dolina31" class="social-button" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram">
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Questions data
+const questions = [
+  {
+    id: 1,
+    option1: {
+      text: "Ухаживать за животными",
+      image: "https://cdn2.postupi.online/images/images335x232/13/923.jpg"
+    },
+    option2: {
+      text: "Обслуживать машины, приборы (следить, регулировать)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/924.jpg"
+    }
+  },
+  {
+    id: 2,
+    option1: {
+      text: "Помогать больным людям, лечить их",
+      image: "https://cdn2.postupi.online/images/images335x232/13/925.jpg"
+    },
+    option2: {
+      text: "Составлять таблицы, схемы, программы для вычислительных машин",
+      image: "https://cdn2.postupi.online/images/images335x232/13/926.jpg"
+    }
+  },
+  {
+    id: 3,
+    option1: {
+      text: "Следить за качеством книжных иллюстраций, плакатов, художественных открыток",
+      image: "https://cdn2.postupi.online/images/images335x232/13/927.jpg"
+    },
+    option2: {
+      text: "Следить за состоянием, развитием растений",
+      image: "https://cdn2.postupi.online/images/images335x232/13/928.jpg"
+    }
+  },
+  {
+    id: 4,
+    option1: {
+      text: "Обрабатывать материалы (дерево, ткань, металл, пластмассу и др.)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/929.jpg"
+    },
+    option2: {
+      text: "Доводить товары до потребителя (рекламировать, продавать)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/930.jpg"
+    }
+  },
+  {
+    id: 5,
+    option1: {
+      text: "Обсуждать научно-популярные книги, статьи",
+      image: "https://cdn2.postupi.online/images/images335x232/13/931.jpg"
+    },
+    option2: {
+      text: "Обсуждать художественные книги (или пьесы, концерты)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/932.jpg"
+    }
+  },
+  {
+    id: 6,
+    option1: {
+      text: "Выращивать молодняк животных какой-либо породы",
+      image: "https://cdn2.postupi.online/images/images335x232/13/933.jpg"
+    },
+    option2: {
+      text: "Тренировать сверстников (или младших) в выполнении каких-либо действий (трудовых, учебных, спортивных)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/934.jpg"
+    }
+  },
+  {
+    id: 7,
+    option1: {
+      text: "Копировать рисунки, изображения (или настраивать музыкальные инструменты)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/935.jpg"
+    },
+    option2: {
+      text: "Управлять каким-либо грузовым, подъемным, транспортным средством (подъемным краном, трактором, тепловозом и др.)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/936.jpg"
+    }
+  },
+  {
+    id: 8,
+    option1: {
+      text: "Сообщать, разъяснять людям нужные им сведения (в справочном бюро, на экскурсии и т.п.)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/937.jpg"
+    },
+    option2: {
+      text: "Оформлять выставки, витрины (или участвовать в подготовке пьес, концертов)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/938.jpg"
+    }
+  },
+  {
+    id: 9,
+    option1: {
+      text: "Ремонтировать вещи, изделия (одежду, технику), жилище",
+      image: "https://cdn2.postupi.online/images/images335x232/13/939.jpg"
+    },
+    option2: {
+      text: "Искать и исправлять ошибки в текстах, таблицах, рисунках",
+      image: "https://cdn2.postupi.online/images/images335x232/13/940.jpg"
+    }
+  },
+  {
+    id: 10,
+    option1: {
+      text: "Лечить животных",
+      image: "https://cdn2.postupi.online/images/images335x232/13/941.jpg"
+    },
+    option2: {
+      text: "Выполнять вычисления, расчеты",
+      image: "https://cdn2.postupi.online/images/images335x232/13/942.jpg"
+    }
+  },
+  {
+    id: 11,
+    option1: {
+      text: "Выводить новые сорта растений",
+      image: "https://cdn2.postupi.online/images/images335x232/13/943.jpg"
+    },
+    option2: {
+      text: "Конструировать, проектировать новые виды промышленных изделий (машины, одежду, дома и др.)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/944.jpg"
+    }
+  },
+  {
+    id: 12,
+    option1: {
+      text: "Разбирать споры, ссоры между людьми, убеждать, разъяснять, поощрять, наказывать",
+      image: "https://cdn2.postupi.online/images/images335x232/13/945.jpg"
+    },
+    option2: {
+      text: "Разбираться в чертежах, схемах, таблицах (проверять, уточнять, приводить в порядок)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/946.jpg"
+    }
+  },
+  {
+    id: 13,
+    option1: {
+      text: "Наблюдать, изучать работу кружков художественной самодеятельности",
+      image: "https://cdn2.postupi.online/images/images335x232/13/947.jpg"
+    },
+    option2: {
+      text: "Наблюдать, изучать жизнь микробов",
+      image: "https://cdn2.postupi.online/images/images335x232/13/948.jpg"
+    }
+  },
+  {
+    id: 14,
+    option1: {
+      text: "Обслуживать, налаживать медицинские приборы, аппараты",
+      image: "https://cdn2.postupi.online/images/images335x232/13/949.jpg"
+    },
+    option2: {
+      text: "Оказывать людям медицинскую помощь при ранениях, ушибах, ожогах и т.п.",
+      image: "https://cdn2.postupi.online/images/images335x232/13/950.jpg"
+    }
+  },
+  {
+    id: 15,
+    option1: {
+      text: "Составлять точные описания, отчеты о наблюдаемых явлениях, событиях",
+      image: "https://cdn2.postupi.online/images/images335x232/13/952.jpg"
+    },
+    option2: {
+      text: "Художественно описывать, изображать события (наблюдаемые или представляемые)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/951.jpg"
+    }
+  },
+  {
+    id: 16,
+    option1: {
+      text: "Делать лабораторные анализы в больнице",
+      image: "https://cdn2.postupi.online/images/images335x232/13/953.jpg"
+    },
+    option2: {
+      text: "Принимать, осматривать больных, беседовать с ними, назначать лечение",
+      image: "https://cdn2.postupi.online/images/images335x232/13/954.jpg"
+    }
+  },
+  {
+    id: 17,
+    option1: {
+      text: "Красить или расписывать стены помещений, поверхность изделий",
+      image: "https://cdn2.postupi.online/images/images335x232/13/955.jpg"
+    },
+    option2: {
+      text: "Осуществлять монтаж зданий или сборку машин, приборов",
+      image: "https://cdn2.postupi.online/images/images335x232/13/956.jpg"
+    }
+  },
+  {
+    id: 18,
+    option1: {
+      text: "Организовывать культпоходы сверстников или младших (в театры, музеи), экскурсии, туристические походы и т.п.",
+      image: "https://cdn2.postupi.online/images/images335x232/13/972.jpg"
+    },
+    option2: {
+      text: "Играть на сцене, принимать участие в концертах",
+      image: "https://cdn2.postupi.online/images/images335x232/13/973.jpg"
+    }
+  },
+  {
+    id: 19,
+    option1: {
+      text: "Изготовлять по чертежам детали, изделия (машины, одежду), строить здания",
+      image: "https://cdn2.postupi.online/images/images335x232/13/969.jpg"
+    },
+    option2: {
+      text: "Заниматься черчением, копировать чертежи, карты",
+      image: "https://cdn2.postupi.online/images/images335x232/13/970.jpg"
+    }
+  },
+  {
+    id: 20,
+    option1: {
+      text: "Вести борьбу с болезнями растений, с вредителями леса, сада",
+      image: "https://cdn2.postupi.online/images/images335x232/13/967.jpg"
+    },
+    option2: {
+      text: "Работать на клавишных машинах (пишущей машинке, телетайпе, наборной машине и др.)",
+      image: "https://cdn2.postupi.online/images/images335x232/13/968.jpg"
+    }
+  }
+];
+
+// Profession types and descriptions
+const professionTypes = {
+  "Человек-природа": {
+    description: "Вы предпочитаете работать с природными объектами (растениями, животными) и явлениями. Вам нравится ухаживать за живыми организмами, изучать их, заниматься сельским хозяйством, охраной природы.",
+    professions: [
+      "Агроном",
+      "Ветеринар",
+      "Эколог",
+      "Ландшафтный дизайнер",
+      "Зоотехник",
+      "Биолог"
+    ]
+  },
+  "Человек-техника": {
+    description: "Вам интересны технические системы, устройства, механизмы. Вы предпочитаете работать с машинами, приборами, инструментами, заниматься ремонтом, сборкой, наладкой технических устройств.",
+    professions: [
+      "Инженер",
+      "Механик",
+      "Программист",
+      "Электрик",
+      "Строитель",
+      "Автомеханик"
+    ]
+  },
+  "Человек-человек": {
+    description: "Вы любите работать с людьми, общаться, помогать, обучать, руководить. Вам нравится взаимодействовать с другими, решать социальные вопросы, оказывать услуги.",
+    professions: [
+      "Учитель",
+      "Врач",
+      "Психолог",
+      "Менеджер",
+      "HR-специалист",
+      "Социальный работник"
+    ]
+  },
+  "Человек-знаковая система": {
+    description: "Вы предпочитаете работать с цифрами, кодами, схемами, текстами. Вам нравится анализировать информацию, работать с документами, выполнять точные расчеты.",
+    professions: [
+      "Бухгалтер",
+      "Финансовый аналитик",
+      "Переводчик",
+      "Архивариус",
+      "Экономист",
+      "Математик"
+    ]
+  },
+  "Человек-художественный образ": {
+    description: "Вам интересна творческая работа, связанная с искусством, дизайном, созданием художественных образов. Вы предпочитаете деятельность, требующую воображения, эстетического вкуса.",
+    professions: [
+      "Дизайнер",
+      "Художник",
+      "Музыкант",
+      "Актер",
+      "Писатель",
+      "Архитектор"
+    ]
+  }
+};
+
+// Test state
+let currentQuestion = 0;
+let answers = [];
+let scores = {
+  "Человек-природа": 0,
+  "Человек-техника": 0,
+  "Человек-человек": 0,
+  "Человек-знаковая система": 0,
+  "Человек-художественный образ": 0
+};
+
+// DOM elements
+const optionsContainer = document.getElementById('optionsContainer');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const currentQuestionElement = document.getElementById('currentQuestion');
+const progressBar = document.getElementById('progressBar');
+const progressText = document.getElementById('progressText');
+const resultContainer = document.getElementById('resultContainer');
+const resultDescription = document.getElementById('resultDescription');
+const scalesContainer = document.getElementById('scalesContainer');
+const dominantScale = document.getElementById('dominantScale');
+const recommendedProfessions = document.getElementById('recommendedProfessions');
+const profileContainer = document.getElementById('profileContainer');
+
+// Initialize the test
+function initTest() {
+  showQuestion(currentQuestion);
+  updateProgress();
+  
+  // Add event listeners
+  btnPrev.addEventListener('click', prevQuestion);
+  btnNext.addEventListener('click', nextQuestion);
+}
+
+// Show question
+function showQuestion(index) {
+  const question = questions[index];
+  currentQuestionElement.textContent = index + 1;
+  
+  optionsContainer.innerHTML = `
+    <div class="option-card" data-option="1" onclick="selectOption(this, ${index}, 1)">
+      <img src="${question.option1.image}" alt="${question.option1.text}" class="option-image">
+      <p class="option-text">${question.option1.text}</p>
+    </div>
+    <div class="divider">или</div>
+    <div class="option-card" data-option="2" onclick="selectOption(this, ${index}, 2)">
+      <img src="${question.option2.image}" alt="${question.option2.text}" class="option-image">
+      <p class="option-text">${question.option2.text}</p>
+    </div>
+  `;
+
+  // Highlight selected answer if exists
+  if (answers[index] !== undefined) {
+    const selectedOption = document.querySelector(`.option-card[data-option="${answers[index]}"]`);
+    if (selectedOption) {
+      selectedOption.classList.add('selected');
+    }
+  }
+
+  // Update button states
+  btnPrev.disabled = index === 0;
+  btnNext.textContent = index === questions.length - 1 ? 'Завершить' : 'Далее';
+}
+
+// Select option
+function selectOption(element, questionIndex, option) {
+  // Remove selection from all options
+  const options = document.querySelectorAll('.option-card');
+  options.forEach(opt => opt.classList.remove('selected'));
+  
+  // Add selection to clicked option
+  element.classList.add('selected');
+  
+  // Save answer
+  answers[questionIndex] = option;
+}
+
+// Update progress
+function updateProgress() {
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
+  progressBar.style.width = `${progress}%`;
+  progressText.textContent = `${currentQuestion + 1}/${questions.length}`;
+}
+
+// Navigate to previous question
+function prevQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    showQuestion(currentQuestion);
+    updateProgress();
+  }
+}
+
+// Navigate to next question or finish test
+function nextQuestion() {
+  // Check if answer is selected
+  if (answers[currentQuestion] === undefined) {
+    alert('Пожалуйста, выберите один из вариантов ответа');
+    return;
+  }
+
+  if (currentQuestion < questions.length - 1) {
+    currentQuestion++;
+    showQuestion(currentQuestion);
+    updateProgress();
+  } else {
+    finishTest();
+  }
+}
+
+// Finish test and show results
+function finishTest() {
+  // Reset scores
+  scores = {
+    "Человек-природа": 0,
+    "Человек-техника": 0,
+    "Человек-человек": 0,
+    "Человек-знаковая система": 0,
+    "Человек-художественный образ": 0
+  };
+
+  // Each question contributes to one or more types
+  const questionMapping = [
+    ["Человек-природа", "Человек-техника"],
+    ["Человек-человек", "Человек-знаковая система"],
+    ["Человек-художественный образ", "Человек-природа"],
+    ["Человек-техника", "Человек-человек"],
+    ["Человек-знаковая система", "Человек-художественный образ"],
+    ["Человек-природа", "Человек-человек"],
+    ["Человек-художественный образ", "Человек-техника"],
+    ["Человек-человек", "Человек-художественный образ"],
+    ["Человек-техника", "Человек-знаковая система"],
+    ["Человек-природа", "Человек-знаковая система"],
+    ["Человек-природа", "Человек-техника"],
+    ["Человек-человек", "Человек-знаковая система"],
+    ["Человек-художественный образ", "Человек-знаковая система"],
+    ["Человек-техника", "Человек-человек"],
+    ["Человек-знаковая система", "Человек-художественный образ"],
+    ["Человек-знаковая система", "Человек-человек"],
+    ["Человек-художественный образ", "Человек-техника"],
+    ["Человек-человек", "Человек-художественный образ"],
+    ["Человек-техника", "Человек-знаковая система"],
+    ["Человек-природа", "Человек-знаковая система"]
+  ];
+
+  for (let i = 0; i < answers.length; i++) {
+    const selectedOption = answers[i];
+    const typesForQuestion = questionMapping[i];
+    const selectedType = typesForQuestion[selectedOption - 1];
+    scores[selectedType]++;
+  }
+
+  // Display results
+  showResults();
+}
+
+// Show results with all scales
+function showResults() {
+  // Hide test container and show results
+  document.querySelector('.content-wrap').style.display = 'none';
+  resultContainer.style.display = 'block';
+  profileContainer.style.display = 'none';
+  
+  // Calculate percentages for all types and find dominant types
+  const totalQuestions = answers.length;
+  const percentages = {};
+  let maxPercentage = 0;
+  let dominantTypes = [];
+  
+  for (const type in scores) {
+    percentages[type] = Math.round((scores[type] / totalQuestions) * 100);
+    
+    if (percentages[type] > maxPercentage) {
+      maxPercentage = percentages[type];
+      dominantTypes = [type];
+    } else if (percentages[type] === maxPercentage) {
+      dominantTypes.push(type);
+    }
+  }
+  
+  // Save test results to localStorage
+  saveTestResults(percentages, dominantTypes);
+  
+  // Set result description
+  if (dominantTypes.length === 1) {
+    resultDescription.textContent = `Ваши профессиональные предпочтения распределились следующим образом:`;
+  } else {
+    resultDescription.textContent = `У вас несколько доминирующих профессиональных типов:`;
+  }
+  
+  // Display all scales
+  scalesContainer.innerHTML = '';
+  
+  for (const type in percentages) {
+    const percentage = percentages[type];
+    
+    const scaleItem = document.createElement('div');
+    scaleItem.className = 'scale-item';
+    if (dominantTypes.includes(type)) {
+      scaleItem.classList.add('dominant');
+    }
+    
+    scaleItem.innerHTML = `
+      <div class="scale-name">
+        <span>${type}</span>
+        <span>${percentage}%</span>
+      </div>
+      <div class="scale-bar-container">
+        <div class="scale-bar" style="width: ${percentage}%"></div>
+      </div>
+    `;
+    
+    scalesContainer.appendChild(scaleItem);
+  }
+  
+  // Display dominant scale description(s)
+  let dominantScaleHTML = '';
+  if (dominantTypes.length === 1) {
+    dominantScaleHTML = `
+      <div class="dominant-scale-title">Ваш доминирующий тип: ${dominantTypes[0]}</div>
+      <div class="dominant-scale-description">${professionTypes[dominantTypes[0]].description}</div>
+    `;
+  } else {
+    dominantScaleHTML = `
+      <div class="dominant-scale-title">Ваши доминирующие типы: ${dominantTypes.join(' и ')}</div>
+      ${dominantTypes.map(type => `
+        <div class="dominant-scale-description">
+          <strong>${type}:</strong> ${professionTypes[type].description}
+        </div>
+      `).join('')}
+    `;
+  }
+  
+  dominantScale.innerHTML = dominantScaleHTML;
+  
+  // Display recommended professions for all dominant types
+  showRecommendedProfessions(dominantTypes);
+  
+  // Scroll to results
+  resultContainer.scrollIntoView({ behavior: 'smooth' });
+}
+
+function showRecommendedProfessions(dominantTypes) {
+  recommendedProfessions.innerHTML = `
+    <h3 class="recommended-professions-title">Рекомендуемые профессии и вакансии</h3>
+    <div class="profession-list" id="professionList"></div>
+  `;
+  
+  const professionList = document.getElementById('professionList');
+  
+  // Собираем все уникальные профессии из доминирующих типов (максимум 3 на тип)
+  const allProfessions = [];
+  dominantTypes.forEach(type => {
+    // Берем только первые 3 профессии для каждого типа
+    const professionsForType = professionTypes[type].professions.slice(0, 3);
+    professionsForType.forEach(profession => {
+      if (!allProfessions.includes(profession)) {
+        allProfessions.push(profession);
+      }
+    });
+  });
+  
+  // Ограничиваем общее количество профессий до 3
+  const displayedProfessions = allProfessions.slice(0, 3);
+  
+  // Создаем карточки для каждой профессии с кнопками вакансий
+  displayedProfessions.forEach(profession => {
+    const professionItem = document.createElement('div');
+    professionItem.className = 'profession-item';
+    
+    // Создаем URL для поиска вакансий
+    const hhUrl = `https://hh.ru/search/vacancy?text=${encodeURIComponent(profession)}&area=113`;
+    const avitoUrl = `https://www.avito.ru/all/vakansii?q=${encodeURIComponent(profession)}`;
+    
+    professionItem.innerHTML = `
+      <div class="profession-name">${profession}</div>
+      <div class="profession-buttons">
+        <a href="${hhUrl}" class="vacancy-btn hh" target="_blank">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/79/HeadHunter_logo.png" alt="hh.ru">
+          Искать на hh.ru
+        </a>
+        <a href="${avitoUrl}" class="vacancy-btn avito" target="_blank">
+          <img src="https://play-lh.googleusercontent.com/Yv8ioqLmbvrBV0L6uH8NC7fVXRTJQZImZgzI6sRuvV4o2X9d9XXknDGQktyaR3dG4Nw" alt="Avito">
+          Искать на Avito
+        </a>
+      </div>
+    `;
+    
+    professionList.appendChild(professionItem);
+  });
+  
+  // Если нет профессий для отображения
+  if (displayedProfessions.length === 0) {
+    professionList.innerHTML = '<p>Нет рекомендуемых профессий для отображения.</p>';
+  }
+}
+
+// Save test results to localStorage
+function saveTestResults(percentages, dominantTypes) {
+  const now = new Date();
+  const testResults = {
+    date: now.toISOString(), // Сохраняем дату в формате ISO для удобства парсинга
+    formattedDate: formatDate(now), // Форматированная дата для отображения
+    scores: percentages,
+    dominantTypes: dominantTypes
+  };
+  
+  let testHistory = JSON.parse(localStorage.getItem('testHistory')) || [];
+  testHistory.unshift(testResults); // Add new result to the beginning
+  localStorage.setItem('testHistory', JSON.stringify(testHistory));
+}
+
+// Format date for display
+function formatDate(date) {
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  
+  return `${day}.${month}.${year} в ${hours}:${minutes}`;
+}
+
+// Show test history in profile
+function showTestHistory() {
+  const testHistory = JSON.parse(localStorage.getItem('testHistory')) || [];
+  const historyContainer = document.getElementById('testHistory');
+  
+  if (testHistory.length === 0) {
+    historyContainer.innerHTML = '<p>Вы еще не проходили тестирование.</p>';
+    return;
+  }
+  
+  historyContainer.innerHTML = testHistory.map((result, index) => {
+    // Используем заранее отформатированную дату или форматируем ее, если нет
+    const displayDate = result.formattedDate || formatDate(new Date(result.date));
+    
+    const scalesHTML = Object.entries(result.scores).map(([type, percentage]) => `
+      <div class="scale-item ${result.dominantTypes.includes(type) ? 'dominant' : ''}">
+        <div class="scale-name">
+          <span>${type}</span>
+          <span>${percentage}%</span>
+        </div>
+        <div class="scale-bar-container">
+          <div class="scale-bar" style="width: ${percentage}%"></div>
+        </div>
+      </div>
+    `).join('');
+    
+    return `
+      <div class="test-history-item">
+        <div class="test-history-date">Тестирование #${index + 1}</div>
+        <div class="test-history-time">Завершено: ${displayDate}</div>
+        <div class="test-history-actions">
+          <button class="test-history-download" onclick="downloadSingleResult(${index})">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+              <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+            </svg>
+            Сохранить
+          </button>
+        </div>
+        <div class="test-history-results">
+          ${scalesHTML}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Download single test result as Excel file
+function downloadSingleResult(index) {
+  const testHistory = JSON.parse(localStorage.getItem('testHistory')) || [];
+  if (testHistory.length === 0 || !testHistory[index]) return;
+  
+  const result = testHistory[index];
+  
+  // Create workbook
+  const wb = XLSX.utils.book_new();
+  
+  // 1. Sheet with test results
+  const resultsData = [
+    ["Результаты профориентационного теста от АПХ 'Зеленая Долина'"],
+    ["Дата прохождения:", result.formattedDate || formatDate(new Date(result.date))],
+    [""],
+    ["Тип профессии", "Результат (%)"]
+  ];
+  
+  // Add scale results
+  for (const type in result.scores) {
+    resultsData.push([type, result.scores[type]]);
+  }
+  
+  resultsData.push(
+    [""],
+    ["Доминирующие типы:", result.dominantTypes.join(", ")]
+  );
+  
+  const wsResults = XLSX.utils.aoa_to_sheet(resultsData);
+  
+  // 2. Sheet with descriptions
+  const descData = [
+    ["Описание профессиональных типов"],
+    [""]
+  ];
+  
+  result.dominantTypes.forEach(type => {
+    descData.push(
+      [type],
+      [professionTypes[type].description],
+      [""]
+    );
+  });
+  
+  const wsDesc = XLSX.utils.aoa_to_sheet(descData);
+  
+  // 3. Sheet with recommended professions
+  const profData = [
+    ["Рекомендуемые профессии"],
+    [""]
+  ];
+  
+  const allProfessions = [];
+  result.dominantTypes.forEach(type => {
+    professionTypes[type].professions.slice(0, 3).forEach(profession => {
+      if (!allProfessions.includes(profession)) {
+        allProfessions.push(profession);
+      }
+    });
+  });
+  
+  allProfessions.slice(0, 3).forEach(profession => {
+    profData.push([profession]);
+  });
+  
+  const wsProf = XLSX.utils.aoa_to_sheet(profData);
+  
+  // Add sheets to workbook
+  XLSX.utils.book_append_sheet(wb, wsResults, "Результаты");
+  XLSX.utils.book_append_sheet(wb, wsDesc, "Описание");
+  XLSX.utils.book_append_sheet(wb, wsProf, "Профессии");
+  
+  // Generate Excel file
+  const fileName = `Результаты теста Зеленая Долина ${new Date(result.date).toLocaleDateString()}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+}
+
+// Download all test results as Excel file
+function downloadAllResults() {
+  const testHistory = JSON.parse(localStorage.getItem('testHistory')) || [];
+  if (testHistory.length === 0) {
+    alert('Нет сохраненных результатов тестирования');
+    return;
+  }
+  
+  // Create workbook
+  const wb = XLSX.utils.book_new();
+  
+  // Create a sheet for each test result
+  testHistory.forEach((result, index) => {
+    const resultsData = [
+      [`Результаты тестирования #${index + 1} от ${result.formattedDate || formatDate(new Date(result.date))}`],
+      [""],
+      ["Тип профессии", "Результат (%)"]
+    ];
+    
+    // Add scale results
+    for (const type in result.scores) {
+      resultsData.push([type, result.scores[type]]);
+    }
+    
+    resultsData.push(
+      [""],
+      ["Доминирующие типы:", result.dominantTypes.join(", ")]
+    );
+    
+    // Add descriptions
+    resultsData.push(
+      [""],
+      ["Описание доминирующих типов:"],
+      [""]
+    );
+    
+    result.dominantTypes.forEach(type => {
+      resultsData.push(
+        [type],
+        [professionTypes[type].description],
+        [""]
+      );
+    });
+    
+    // Add recommended professions
+    resultsData.push(
+      [""],
+      ["Рекомендуемые профессии:"],
+      [""]
+    );
+    
+    const allProfessions = [];
+    result.dominantTypes.forEach(type => {
+      professionTypes[type].professions.slice(0, 3).forEach(profession => {
+        if (!allProfessions.includes(profession)) {
+          allProfessions.push(profession);
+        }
+      });
+    });
+    
+    allProfessions.slice(0, 3).forEach(profession => {
+      resultsData.push([profession]);
+    });
+    
+    const ws = XLSX.utils.aoa_to_sheet(resultsData);
+    XLSX.utils.book_append_sheet(wb, ws, `Тест ${index + 1}`);
+  });
+  
+  // Generate Excel file
+  const fileName = `Все результаты тестов Зеленая Долина.xlsx`;
+  XLSX.writeFile(wb, fileName);
+}
+
+// Download results as Excel file
+function downloadResults() {
+  // Get data from localStorage
+  const testHistory = JSON.parse(localStorage.getItem('testHistory')) || [];
+  if (testHistory.length === 0) return;
+  
+  const latestResult = testHistory[0]; // Latest result
+
+  // Create workbook
+  const wb = XLSX.utils.book_new();
+  
+  // 1. Sheet with test results
+  const resultsData = [
+    ["Результаты профориентационного теста от АПХ 'Зеленая Долина'"],
+    ["Дата прохождения:", latestResult.formattedDate || formatDate(new Date(latestResult.date))],
+    [""],
+    ["Тип профессии", "Результат (%)"]
+  ];
+  
+  // Add scale results
+  for (const type in latestResult.scores) {
+    resultsData.push([type, latestResult.scores[type]]);
+  }
+  
+  resultsData.push(
+    [""],
+    ["Доминирующие типы:", latestResult.dominantTypes.join(", ")]
+  );
+  
+  const wsResults = XLSX.utils.aoa_to_sheet(resultsData);
+  
+  // Set column widths and wrap text for results sheet
+  if (!wsResults['!cols']) wsResults['!cols'] = [];
+  wsResults['!cols'][0] = { wch: 30 }; // Ширина первого столбца
+  wsResults['!cols'][1] = { wch: 15 }; // Ширина второго столбца
+  
+  // 2. Sheet with descriptions
+  const descData = [
+    ["Описание профессиональных типов"],
+    [""]
+  ];
+  
+  latestResult.dominantTypes.forEach(type => {
+    descData.push(
+      [type],
+      [professionTypes[type].description],
+      [""]
+    );
+  });
+  
+  const wsDesc = XLSX.utils.aoa_to_sheet(descData);
+  
+  // Set column widths and wrap text for description sheet
+  if (!wsDesc['!cols']) wsDesc['!cols'] = [];
+  wsDesc['!cols'][0] = { wch: 50, wrapText: true }; // Широкий столбец с переносом текста
+  
+  // 3. Sheet with recommended professions
+  const profData = [
+    ["Рекомендуемые профессии"],
+    [""]
+  ];
+  
+  const allProfessions = [];
+  latestResult.dominantTypes.forEach(type => {
+    professionTypes[type].professions.slice(0, 3).forEach(profession => {
+      if (!allProfessions.includes(profession)) {
+        allProfessions.push(profession);
+      }
+    });
+  });
+  
+  allProfessions.slice(0, 3).forEach(profession => {
+    profData.push([profession]);
+  });
+  
+  const wsProf = XLSX.utils.aoa_to_sheet(profData);
+  
+  // Set column width for professions sheet
+  if (!wsProf['!cols']) wsProf['!cols'] = [];
+  wsProf['!cols'][0] = { wch: 30 };
+  
+  // Add sheets to workbook
+  XLSX.utils.book_append_sheet(wb, wsResults, "Результаты");
+  XLSX.utils.book_append_sheet(wb, wsDesc, "Описание");
+  XLSX.utils.book_append_sheet(wb, wsProf, "Профессии");
+  
+  // Generate Excel file
+  const fileName = `Результаты теста Зеленая Долина ${new Date().toLocaleDateString()}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+}
+
+// Аналогичные изменения для функций downloadSingleResult и downloadAllResults:
+
+function downloadSingleResult(index) {
+  const testHistory = JSON.parse(localStorage.getItem('testHistory')) || [];
+  if (testHistory.length === 0 || !testHistory[index]) return;
+  
+  const result = testHistory[index];
+  
+  // Create workbook
+  const wb = XLSX.utils.book_new();
+  
+  // 1. Sheet with test results
+  const resultsData = [
+    ["Результаты профориентационного теста от АПХ 'Зеленая Долина'"],
+    ["Дата прохождения:", result.formattedDate || formatDate(new Date(result.date))],
+    [""],
+    ["Тип профессии", "Результат (%)"]
+  ];
+  
+  // Add scale results
+  for (const type in result.scores) {
+    resultsData.push([type, result.scores[type]]);
+  }
+  
+  resultsData.push(
+    [""],
+    ["Доминирующие типы:", result.dominantTypes.join(", ")]
+  );
+  
+  const wsResults = XLSX.utils.aoa_to_sheet(resultsData);
+  
+  // Set column widths
+  if (!wsResults['!cols']) wsResults['!cols'] = [];
+  wsResults['!cols'][0] = { wch: 30 };
+  wsResults['!cols'][1] = { wch: 15 };
+  
+  // 2. Sheet with descriptions
+  const descData = [
+    ["Описание профессиональных типов"],
+    [""]
+  ];
+  
+  result.dominantTypes.forEach(type => {
+    descData.push(
+      [type],
+      [professionTypes[type].description],
+      [""]
+    );
+  });
+  
+  const wsDesc = XLSX.utils.aoa_to_sheet(descData);
+  
+  // Set column width and wrap text
+  if (!wsDesc['!cols']) wsDesc['!cols'] = [];
+  wsDesc['!cols'][0] = { wch: 50, wrapText: true };
+  
+  // 3. Sheet with recommended professions
+  const profData = [
+    ["Рекомендуемые профессии"],
+    [""]
+  ];
+  
+  const allProfessions = [];
+  result.dominantTypes.forEach(type => {
+    professionTypes[type].professions.slice(0, 3).forEach(profession => {
+      if (!allProfessions.includes(profession)) {
+        allProfessions.push(profession);
+      }
+    });
+  });
+  
+  allProfessions.slice(0, 3).forEach(profession => {
+    profData.push([profession]);
+  });
+  
+  const wsProf = XLSX.utils.aoa_to_sheet(profData);
+  
+  // Set column width
+  if (!wsProf['!cols']) wsProf['!cols'] = [];
+  wsProf['!cols'][0] = { wch: 30 };
+  
+  // Add sheets to workbook
+  XLSX.utils.book_append_sheet(wb, wsResults, "Результаты");
+  XLSX.utils.book_append_sheet(wb, wsDesc, "Описание");
+  XLSX.utils.book_append_sheet(wb, wsProf, "Профессии");
+  
+  // Generate Excel file
+  const fileName = `Результаты теста Зеленая Долина ${new Date(result.date).toLocaleDateString()}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+}
+
+function downloadAllResults() {
+  const testHistory = JSON.parse(localStorage.getItem('testHistory')) || [];
+  if (testHistory.length === 0) {
+    alert('Нет сохраненных результатов тестирования');
+    return;
+  }
+  
+  // Create workbook
+  const wb = XLSX.utils.book_new();
+  
+  // Create a sheet for each test result
+  testHistory.forEach((result, index) => {
+    const resultsData = [
+      [`Результаты тестирования #${index + 1} от ${result.formattedDate || formatDate(new Date(result.date))}`],
+      [""],
+      ["Тип профессии", "Результат (%)"]
+    ];
+    
+    // Add scale results
+    for (const type in result.scores) {
+      resultsData.push([type, result.scores[type]]);
+    }
+    
+    resultsData.push(
+      [""],
+      ["Доминирующие типы:", result.dominantTypes.join(", ")]
+    );
+    
+    // Add descriptions
+    resultsData.push(
+      [""],
+      ["Описание доминирующих типов:"],
+      [""]
+    );
+    
+    result.dominantTypes.forEach(type => {
+      resultsData.push(
+        [type],
+        [professionTypes[type].description],
+        [""]
+      );
+    });
+    
+    // Add recommended professions
+    resultsData.push(
+      [""],
+      ["Рекомендуемые профессии:"],
+      [""]
+    );
+    
+    const allProfessions = [];
+    result.dominantTypes.forEach(type => {
+      professionTypes[type].professions.slice(0, 3).forEach(profession => {
+        if (!allProfessions.includes(profession)) {
+          allProfessions.push(profession);
+        }
+      });
+    });
+    
+    allProfessions.slice(0, 3).forEach(profession => {
+      resultsData.push([profession]);
+    });
+    
+    const ws = XLSX.utils.aoa_to_sheet(resultsData);
+    
+    // Set column widths and wrap text
+    if (!ws['!cols']) ws['!cols'] = [];
+    ws['!cols'][0] = { wch: 30 };
+    ws['!cols'][1] = { wch: 15 };
+    
+    // Apply wrap text to all cells in column A
+    Object.keys(ws).forEach(cell => {
+      if (cell.startsWith('A') && cell !== 'A1') {
+        if (!ws[cell].s) ws[cell].s = {};
+        ws[cell].s.wrapText = true;
+      }
+    });
+    
+    XLSX.utils.book_append_sheet(wb, ws, `Тест ${index + 1}`);
+  });
+  
+  // Generate Excel file
+  const fileName = `Все результаты тестов Зеленая Долина.xlsx`;
+  XLSX.writeFile(wb, fileName);
+}
+// Restart the test
+function restartTest() {
+  // Reset test state
+  currentQuestion = 0;
+  answers = [];
+  scores = {
+    "Человек-природа": 0,
+    "Человек-техника": 0,
+    "Человек-человек": 0,
+    "Человек-знаковая система": 0,
+    "Человек-художественный образ": 0
+  };
+  
+  // Show first question
+  document.querySelector('.content-wrap').style.display = 'block';
+  resultContainer.style.display = 'none';
+  profileContainer.style.display = 'none';
+  showQuestion(currentQuestion);
+  updateProgress();
+  
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Initialize the test when page loads
+window.onload = function() {
+    document.getElementById('btnNavProfile').addEventListener('click', function() {
+        document.querySelector('.content-wrap').style.display = 'none';
+        resultContainer.style.display = 'none';
+        profileContainer.style.display = 'block';
+        showTestHistory();
+        profileContainer.scrollIntoView({ behavior: 'smooth' });
+    });
+    
+    document.getElementById('logoLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        restartTest();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    initTest();
+  
+   // Add event listeners for buttons
+    document.getElementById('btnProfile').addEventListener('click', function() {
+        resultContainer.style.display = 'none';
+        profileContainer.style.display = 'block';
+        showTestHistory();
+        profileContainer.scrollIntoView({ behavior: 'smooth' });
+    });
+  
+    document.getElementById('btnRestart').addEventListener('click', restartTest);
+  
+    document.getElementById('btnDownload').addEventListener('click', downloadResults);
+  
+    document.getElementById('btnBackToResults').addEventListener('click', function() {
+    const testHistory = JSON.parse(localStorage.getItem('testHistory')) || [];
+    if (testHistory.length === 0) {
+        alert('Вы еще не проходили тестирование');
+        return;
+    }
+    profileContainer.style.display = 'none';
+    resultContainer.style.display = 'block';
+    resultContainer.scrollIntoView({ behavior: 'smooth' });
+});
+  
+    document.getElementById('btnDownloadAll').addEventListener('click', downloadAllResults);
+};
+
+// Make functions available globally
+window.selectOption = selectOption;
+window.downloadSingleResult = downloadSingleResult;
+</script>
+</body>
+</html>
