@@ -252,6 +252,7 @@ def process_password2(message, last_name, first_name, middle_name, phone, school
         print('Попытка вставки пользователя в БД...')
         with sqlite3.connect('users.db', check_same_thread=False) as conn:
             cursor = conn.cursor()
+        print(f"DEBUG: Регистрация пользователя - телефон: {phone}, password_hash: {password_hash}")
         cursor.execute(
             "INSERT INTO users (user_id, first_name, last_name, middle_name, phone, school, class, register_date, password_hash) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)",
             (message.from_user.id, first_name, last_name, middle_name, phone, school, class_num, password_hash)

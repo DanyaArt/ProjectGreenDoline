@@ -31,7 +31,7 @@ def get_db():
 # Главная страница админки
 @app.route('/')
 def index_page():
-    return render_template('index.html')
+    return "Сайт работает! <a href='/admin'>Админ-панель</a>"
 
 @app.route('/edit/<int:user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):
@@ -129,17 +129,30 @@ def login():
     phone = data.get('phone')
     password = data.get('password')
     password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    
+    print(f"DEBUG: Попытка входа - телефон: {phone}")
+    
     conn = get_db()
     cursor = conn.cursor()
+    
+    # Проверим, есть ли пользователь с таким телефоном
+    user_by_phone = cursor.execute("SELECT * FROM users WHERE phone=?", (phone,)).fetchone()
+    if user_by_phone:
+        print(f"DEBUG: Пользователь найден по телефону, password_hash: {user_by_phone['password_hash']}")
+        print(f"DEBUG: Введенный password_hash: {password_hash}")
+    
     user = cursor.execute(
         "SELECT * FROM users WHERE phone=? AND password_hash=?",
         (phone, password_hash)
     ).fetchone()
     conn.close()
+    
     if user:
         session['user_id'] = user['id']
+        print(f"DEBUG: Вход успешен для пользователя ID: {user['id']}")
         return jsonify({'success': True, 'redirect': '/test.html'})
     else:
+        print(f"DEBUG: Вход не удался - пользователь не найден или неправильный пароль")
         return jsonify({'success': False, 'error': 'Неправильный логин или пароль'})
 
 @app.route('/test.html')
