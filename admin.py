@@ -164,11 +164,17 @@ def test_page():
 def admin_index():
     conn = get_db()
     cursor = conn.cursor()
+    
+    # Проверим структуру таблицы
     cursor.execute("PRAGMA table_info(users)")
     columns = [column[1] for column in cursor.fetchall()]
+    print(f"DEBUG: Структура таблицы users: {columns}")
+    
     if 'register_date' not in columns:
         cursor.execute("ALTER TABLE users ADD COLUMN register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
         conn.commit()
+    
+    # Получим всех пользователей с отладочной информацией
     users = conn.execute('''
     SELECT id, user_id, 
            first_name, last_name, middle_name, 
@@ -178,7 +184,14 @@ def admin_index():
     FROM users 
     ORDER BY register_date DESC
     ''').fetchall()
+    
     total_users = conn.execute('SELECT COUNT(*) FROM users').fetchone()[0]
+    print(f"DEBUG: Всего пользователей в БД: {total_users}")
+    
+    # Выведем всех пользователей для отладки
+    for user in users:
+        print(f"DEBUG: Пользователь - ID: {user['id']}, Telegram ID: {user['user_id']}, ФИО: {user['full_name']}, Телефон: {user['phone']}")
+    
     conn.close()
     return render_template('admin.html', 
                          users=users, 

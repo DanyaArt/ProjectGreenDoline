@@ -19,9 +19,12 @@ def init_db():
              user_id INTEGER UNIQUE,
              first_name TEXT,
              last_name TEXT,
+             middle_name TEXT,
              phone TEXT,
              school TEXT,
              class TEXT,
+             password_hash TEXT,
+             tg TEXT,
              register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     conn.commit()
     return conn, cursor
@@ -34,21 +37,7 @@ TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '7709800436:AAG9zdInNqWmU-TW7IuzioH
 bot = telebot.TeleBot(TOKEN)
 
 
-# Подключение к базе данных
-conn = sqlite3.connect('users.db', check_same_thread=False)
-cursor = conn.cursor()
-
-# Создание таблицы пользователей
-cursor.execute('''CREATE TABLE IF NOT EXISTS users
-             (id INTEGER PRIMARY KEY AUTOINCREMENT,
-             user_id INTEGER UNIQUE,
-             first_name TEXT,
-             last_name TEXT,
-             phone TEXT,
-             school TEXT,
-             class TEXT,
-             register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
-conn.commit()
+# Подключение к базе данных уже создано в init_db()
 
 def get_main_menu():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -252,15 +241,47 @@ def process_password2(message, last_name, first_name, middle_name, phone, school
         print('Попытка вставки пользователя в БД...')
         with sqlite3.connect('users.db', check_same_thread=False) as conn:
             cursor = conn.cursor()
-        print(f"DEBUG: Регистрация пользователя - телефон: {phone}, password_hash: {password_hash}")
-        cursor.execute(
-            "INSERT INTO users (user_id, first_name, last_name, middle_name, phone, school, class, register_date, password_hash) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)",
-            (message.from_user.id, first_name, last_name, middle_name, phone, school, class_num, password_hash)
-        )
-        conn.commit()
-        print('Пользователь успешно добавлен!')
-        bot.send_message(message.chat.id, "✅ Регистрация завершена!", reply_markup=types.ReplyKeyboardRemove())
-        show_menu(message)
+            
+            # Проверим, существует ли таблица
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
+            if not cursor.fetchone():
+                print("ОШИБКА: Таблица users не существует!")
+                # Создадим таблицу
+                cursor.execute('''CREATE TABLE users
+                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                      user_id INTEGER UNIQUE,
+                      first_name TEXT,
+                      last_name TEXT,
+                      middle_name TEXT,
+                      phone TEXT,
+                      school TEXT,
+                      class TEXT,
+                      password_hash TEXT,
+                      tg TEXT,
+                      register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+                conn.commit()
+                print("Таблица users создана!")
+            
+            print(f"DEBUG: Регистрация пользователя - телефон: {phone}, password_hash: {password_hash}")
+            print(f"DEBUG: Данные для вставки: user_id={message.from_user.id}, first_name={first_name}, last_name={last_name}, middle_name={middle_name}, phone={phone}, school={school}, class={class_num}")
+            
+            cursor.execute(
+                "INSERT INTO users (user_id, first_name, last_name, middle_name, phone, school, class, register_date, password_hash) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)",
+                (message.from_user.id, first_name, last_name, middle_name, phone, school, class_num, password_hash)
+            )
+            conn.commit()
+            print('Пользователь успешно добавлен!')
+            
+            # Проверим, что пользователь действительно добавлен
+            cursor.execute("SELECT * FROM users WHERE user_id=?", (message.from_user.id,))
+            added_user = cursor.fetchone()
+            if added_user:
+                print(f"Проверка: пользователь найден в БД с ID: {added_user[0]}")
+            else:
+                print("ОШИБКА: пользователь не найден в БД после вставки!")
+            
+            bot.send_message(message.chat.id, "✅ Регистрация завершена!", reply_markup=types.ReplyKeyboardRemove())
+            show_menu(message)
     except Exception as e:
         import traceback
         print('Ошибка при регистрации:', traceback.format_exc())
