@@ -394,12 +394,7 @@ def delete_profile(message):
 def back_to_menu(message):
     show_menu(message)
 
-# Запуск бота
-if __name__ == '__main__':
-    print("Бот запущен...")
-    bot.infinity_polling()
-
-@bot.message_handler(func=lambda m: m.text and not m.text.startswith('/'))
+@bot.message_handler(func=lambda m: m.text and not m.text.startswith('/') and m.text not in ["Войти", "Зарегистрироваться", "👤 Мой профиль", "✏️ Изменить данные", "🗑️ Удалить профиль", "↩️ Назад", "❌ Нет, отменить", "✅ Да, удалить"])
 def save_user_message(message):
     try:
         conn = sqlite3.connect('users.db')
@@ -409,3 +404,8 @@ def save_user_message(message):
         conn.close()
     except Exception as e:
         print(f'Ошибка при сохранении сообщения пользователя: {e}')
+
+# Запуск бота
+if __name__ == '__main__':
+    print("Бот запущен...")
+    bot.infinity_polling()
